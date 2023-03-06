@@ -3,6 +3,7 @@
 body {
   background: url('../public/img/background.svg') no-repeat;
   background-size: cover;
+  background-color: var(--black);
 }
 
 
@@ -143,4 +144,13 @@ body {
 
 .seat-info .s-taken::before {
   background: var(--failure);
+}
+
+.date-picker input{
+  background: var(--black);
+  border: 2px solid var(--primary);
+  color: white;
+  border-radius: 50px;
+  font-size: .8rem;
+  padding: 0.2rem 0.5rem;
 }

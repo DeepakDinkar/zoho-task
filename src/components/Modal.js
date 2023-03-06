@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { bookSeats } from "../services/Api";
+import Alert from "react-bootstrap/Alert";
 
 const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
   const { theatre, availableTimes, movie } = bookingDetails;
@@ -25,6 +26,12 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
 
   const [reservedSeats, setReservedSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alert, setAlert] = useState({
+    message: null,
+    type: null,
+  });
 
   useEffect(() => {
     if (time && date) {
@@ -75,6 +82,18 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
   };
 
   const bookMovieSeats = () => {
+    setShowAlert(false);
+
+    if (!time) {
+      setAlert({ message: "Please select time!", type: "danger" });
+      return setShowAlert(true);
+    }
+
+    if (selectedSeats.length === 0) {
+      setAlert({ message: "Please select atlease 1 seat!", type: "danger" });
+      return setShowAlert(true);
+    }
+
     const body = {
       show_time: time?.showTime,
       movie_name: movie?.movie_name,
@@ -82,7 +101,25 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
       booked_seats: selectedSeats,
       date: date,
     };
-    bookSeats(body);
+    bookSeats(body)
+      .then(({ message }) => {
+        if (message.includes("success")) {
+          setReservedSeats([...reservedSeats, ...selectedSeats]);
+          setSelectedSeats([]);
+        }
+        setAlert({
+          message: message,
+          type: message.includes("success") ? "success" : "danger",
+        });
+        setShowAlert(true);
+      })
+      .catch(() => {
+        setAlert({
+          message: "Oops! Please try again after some time",
+          type: "danger",
+        });
+        setShowAlert(false);
+      });
   };
   return (
     <Modal
@@ -95,11 +132,7 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
       keyboard={false}
       size="lg"
     >
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {movie?.movie_name} - {theatre?.theatre_name}
-        </Modal.Title>
-      </Modal.Header>
+      <Modal.Header closeButton></Modal.Header>
       <Modal.Body>
         <div
           className="d-flex justify-content-between flex-column
@@ -122,7 +155,9 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
           <div className="date-wrapper d-flex py-2">
             <span>Date: </span>
             <DatePicker
+              wrapperClassName="date-picker"
               startDate={startDate}
+              minDate={startDate}
               selected={startDate}
               onChange={(date) => {
                 setStartDate(date);
@@ -149,7 +184,7 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
                 </button>
               ))}
             </div>
-            <div className="d-flex seat-info justify-content-center">
+            <div className="d-flex seat-info justify-content-center py-3">
               <span className="s-available text-uppercase position-relative px-4">
                 Available
               </span>
@@ -160,6 +195,9 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
                 Taken
               </span>
             </div>
+            <Alert show={showAlert} variant={alert?.type}>
+              <div>{alert?.message}</div>
+            </Alert>
             <div className="d-flex justify-content-center">
               <button
                 className="btn btn-book-seat text-uppercase fw-bold my-4"
