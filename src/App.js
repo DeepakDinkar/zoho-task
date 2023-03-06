@@ -1,10 +1,15 @@
-import Container from "react-bootstrap/Container";
-import Navbar from "react-bootstrap/Navbar";
 import "./App.css";
 import Error from "./components/Error/Error";
+import ErrorBoundary from "./components/Error/ErrorBoundary";
+import Header from "./components/Header/Header";
 import Loader from "./components/Loader/Loader";
-import Movies from "./components/Movies";
+import Movies from "./components/Movies/Movies";
 import { useGetAllDetails } from "./hooks/useGetAllDetails";
+
+/**
+ * !Skipped Unit Testing
+ * @returns 
+ */
 const App = () => {
   const { isLoading, data, error } = useGetAllDetails();
 
@@ -17,16 +22,10 @@ const App = () => {
   }
 
   return (
-    <div className="App">
-      <Navbar fixed="top" className="app-bg-primary">
-        <Container>
-          <Navbar.Brand className="fw-bold font-tilt-prism">
-            BLOCKBUSTER
-          </Navbar.Brand>
-        </Container>
-      </Navbar>
+    <ErrorBoundary>
+      <Header />
       <Movies movies={data.movies} theatres={data.theatre} />
-    </div>
+    </ErrorBoundary>
   );
 };
 

@@ -21,15 +21,18 @@ export const getAllDetails = async () => {
   }
 };
 
-export const bookSeats = async (body) => {
-  console.log(body);
-  body = Object.assign(body, { user_mail_id: EMAIL_ID });
-  const response = axios.post(BASE_URL, body, {
-    params: {
-      action: ACTION_PARAMS.BOOK_SEATS,
-    },
-  });
-  const data = (await response).data;
-  console.log(data);
-  return data;
+export const bookSeats = async (payload) => {
+  payload = Object.assign(payload, { user_mail_id: EMAIL_ID });
+  try {
+    const response = axios.post(BASE_URL, payload, {
+      params: {
+        action: ACTION_PARAMS.BOOK_SEATS,
+      },
+    });
+    const data = (await response).data;
+    return Promise.resolve(data);
+  } catch (error) {
+    console.log("Logged error: " + JSON.stringify(error));
+    return Promise.reject(error);
+  }
 };

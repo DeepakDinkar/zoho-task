@@ -1,23 +1,32 @@
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import BootstrapModal from "./Modal";
+import { getAvailableTimes } from "../../Utils";
+import BookSeat from "../BookSeat/BookSeat";
 
 const Movies = ({ movies = [], theatres = [] }) => {
+  const [show, setShow] = useState(false);
   const [bookingDetails, setBookingDetails] = useState({
     theatre: null,
     movie: null,
     availableTimes: [],
   });
 
-  const [show, setShow] = useState(false);
-
+  /**
+   * Handles movie details modal close.
+   */
   const handleClose = () => {
     setShow(false);
   };
 
+  /**
+   * !IMPORTANT - Assuming 1 movie is played in 1 theatre as given in the response.
+   * Returns selected movie shown in the theatre
+   * @param {*} movie (Movie object).
+   */
   const getMovieTheatre = (movie) => {
     const theatre = getTheatre(movie.movie_name);
     const availableTimes = getAvailableTimes(theatre, movie.movie_name);
@@ -31,10 +40,20 @@ const Movies = ({ movies = [], theatres = [] }) => {
     setShow(true);
   };
 
+  /**
+   * Returns tags array from tags string array.
+   * @param {*} tags
+   * @returns
+   */
   const getTags = (tags) => {
     return tags ? tags.split(",") : [];
   };
 
+  /**
+   * Returns theatre from the selected movie name.
+   * @param {*} movieName
+   * @returns
+   */
   const getTheatre = (movieName) => {
     return theatres.find(
       (theatre) =>
@@ -43,24 +62,6 @@ const Movies = ({ movies = [], theatres = [] }) => {
         theatre.show3_movie === movieName ||
         theatre.show4_movie === movieName
     );
-  };
-
-  const getAvailableTimes = (theatre, movieName) => {
-    const availableTimes = [];
-    if (theatre.show1_movie === movieName) {
-      availableTimes.push({ showTime: theatre.show1_time, index: 1 });
-    }
-    if (theatre.show2_movie === movieName) {
-      availableTimes.push({ showTime: theatre.show2_time, index: 2 });
-    }
-    if (theatre.show3_movie === movieName) {
-      availableTimes.push({ showTime: theatre.show3_time, index: 3 });
-    }
-    if (theatre.show4_movie === movieName) {
-      availableTimes.push({ showTime: theatre.show4_time, index: 4 });
-    }
-
-    return availableTimes;
   };
 
   return (
@@ -106,7 +107,7 @@ const Movies = ({ movies = [], theatres = [] }) => {
           </Col>
         ))}
       </Row>
-      <BootstrapModal
+      <BookSeat
         show={show}
         handleClose={handleClose}
         bookingDetails={bookingDetails}
@@ -116,3 +117,8 @@ const Movies = ({ movies = [], theatres = [] }) => {
 };
 
 export default Movies;
+
+Movies.propTypes = {
+  movies: PropTypes.array,
+  theatre: PropTypes.array,
+};

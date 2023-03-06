@@ -49,3 +49,19 @@
     background: var(--black);
     color: var(--white);
 }
+
+.alert-danger {
+    --bs-alert-color: var(--white);
+    --bs-alert-bg: var(--failure);
+    --bs-alert-border-color: var(--failure);
+}
+
+.alert-success {
+    --bs-alert-color: var(--white);
+    --bs-alert-bg: var(--success);
+    --bs-alert-border-color: var(--success);
+}
+
+.btn-close {
+    color: var(--white);
+}

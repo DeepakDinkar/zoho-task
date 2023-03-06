@@ -4,37 +4,41 @@ import Modal from "react-bootstrap/Modal";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
-import { bookSeats } from "../services/Api";
+import { bookSeats } from "../../services/Api";
 import Alert from "react-bootstrap/Alert";
+import { getFormattedDate } from "../../Utils";
+import PropTypes from "prop-types";
+import TheatreInfo from "../Theatre-info/TheatreInfo";
+import {
+  ALERT_TYPES,
+  BOOK_SEAT_FAILURE,
+  SEAT_ERROR,
+  TIME_ERROR,
+} from "../../Constants";
 
-const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
+const BookSeat = ({ show, handleClose, bookingDetails }) => {
+  const area = [...Array(100)];
   const { theatre, availableTimes, movie } = bookingDetails;
-
-  const getFormattedDate = (date) => {
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
 
   const [time, setTime] = useState(null);
   const [date, setDate] = useState(getFormattedDate(new Date()));
-
-  const area = [...Array(100)];
   const [startDate, setStartDate] = useState(new Date());
-
   const [reservedSeats, setReservedSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
-
   const [showAlert, setShowAlert] = useState(false);
   const [alert, setAlert] = useState({
     message: null,
     type: null,
   });
 
+  /**
+   * Effect runs whenever the time or date is changed.
+   * Reserved seats can't be reflected if you close the modal and open again
+   * Only refreshing the page will reflect the latest booked_seats value.
+   */
   useEffect(() => {
     if (time && date) {
+      setSelectedSeats([]); // Resets selected seats whenever time and date is changed.
       const seats = theatre.booked_seats
         ? theatre.booked_seats.find(
             (seat) =>
@@ -43,21 +47,31 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
           )
         : [];
 
-      setReservedSeats(
-        seats ? JSON.parse(seats[`show${time.index}_booked_seats`]) : []
-      );
+      if (seats) {
+        let bookedSeats = seats[`show${time.index}_booked_seats`];
+        if (bookedSeats && bookedSeats.charAt(1) === ",") {
+          bookedSeats = bookedSeats.slice(0, 1) + bookedSeats.slice(2);
+        }
+        setReservedSeats(JSON.parse(bookedSeats));
+      } else {
+        setReservedSeats([]);
+      }
     }
   }, [time, date, theatre]);
 
-  const updateMovieTime = (time) => {
-    setTime(time);
-  };
-
+  /**
+   * Updates date when user is selected.
+   * @param {*} date
+   */
   const updateMovieDate = (date) => {
     const bookingDate = getFormattedDate(date);
     setDate(bookingDate);
   };
 
+  /**
+   * Updates seats whenever user selects the seats.
+   * @param {*} seat
+   */
   const updateSeats = (seat) => {
     if (selectedSeats.includes(seat)) {
       setSelectedSeats((existingSeats) =>
@@ -68,72 +82,115 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
     }
   };
 
+  /**
+   * Resets booking details when user closes the modal.
+   */
   const resetBookingDetails = () => {
     setTime(null);
     setDate(getFormattedDate(new Date()));
+    setStartDate(new Date());
     setSelectedSeats([]);
     setReservedSeats([]);
+    setShowAlert(false);
   };
 
+  /**
+   * Disables reserved seats.
+   * @param {*} index
+   * @returns
+   */
   const disableReservedSeats = (index) => {
     return reservedSeats
       ? reservedSeats.findIndex((seat) => seat === index) > -1
       : false;
   };
 
+  /**
+   * Validates if both time, date and seats are selected.
+   * Performs the booking process.
+   * @returns
+   */
   const bookMovieSeats = () => {
     setShowAlert(false);
 
     if (!time) {
-      setAlert({ message: "Please select time!", type: "danger" });
+      setAlert({ message: TIME_ERROR, type: ALERT_TYPES.DANGER });
       return setShowAlert(true);
     }
 
     if (selectedSeats.length === 0) {
-      setAlert({ message: "Please select atlease 1 seat!", type: "danger" });
+      setAlert({ message: SEAT_ERROR, type: ALERT_TYPES.DANGER });
       return setShowAlert(true);
     }
 
-    const body = {
+    bookSeats(getPayload())
+      .then(({ message }) => handleSuccess(message))
+      .catch(() => handleFailure());
+  };
+
+  /**
+   * Constructs and return payload for booking.
+   * @returns
+   */
+  const getPayload = () => {
+    return {
       show_time: time?.showTime,
       movie_name: movie?.movie_name,
       theatre_name: theatre?.theatre_name,
       booked_seats: selectedSeats,
       date: date,
     };
-    bookSeats(body)
-      .then(({ message }) => {
-        if (message.includes("success")) {
-          setReservedSeats([...reservedSeats, ...selectedSeats]);
-          setSelectedSeats([]);
-        }
-        setAlert({
-          message: message,
-          type: message.includes("success") ? "success" : "danger",
-        });
-        setShowAlert(true);
-      })
-      .catch(() => {
-        setAlert({
-          message: "Oops! Please try again after some time",
-          type: "danger",
-        });
-        setShowAlert(false);
-      });
   };
+
+  /**
+   * Handles booking success --> Need to move to custom hook.
+   * @param {*} message
+   */
+  const handleSuccess = (message) => {
+    if (message.includes(ALERT_TYPES.SUCCESS)) {
+      setReservedSeats([...reservedSeats, ...selectedSeats]);
+      setSelectedSeats([]);
+    }
+    setAlert({
+      message: message,
+      type: message.includes(ALERT_TYPES.SUCCESS)
+        ? ALERT_TYPES.SUCCESS
+        : ALERT_TYPES.DANGER,
+    });
+    setShowAlert(true);
+  };
+
+  /**
+   * Handles booking failure. --> Need to move to custom hook.
+   */
+  const handleFailure = () => {
+    setAlert({
+      message: BOOK_SEAT_FAILURE,
+      type: ALERT_TYPES.DANGER,
+    });
+    setShowAlert(false);
+  };
+
+  /**
+   * Resets all booking details and closes the modal.
+   */
+  const closeModal = () => {
+    resetBookingDetails();
+    handleClose();
+  };
+
   return (
-    <Modal
-      show={show}
-      onHide={() => {
-        resetBookingDetails();
-        handleClose();
-      }}
-      backdrop="static"
-      keyboard={false}
-      size="lg"
-    >
-      <Modal.Header closeButton></Modal.Header>
+    <Modal show={show} backdrop="static" keyboard={false} size="lg">
       <Modal.Body>
+        <div className="modal-close-wrapper d-flex w-100 justify-content-between">
+          <span className="movie-title text-uppercase fw-bold">
+            {movie?.movie_name}
+          </span>
+          <button className="close" onClick={closeModal}>
+            X
+          </button>
+        </div>
+        <TheatreInfo theatre={theatre} />
         <div
           className="d-flex justify-content-between flex-column
            flex-sm-column flex-md-column flex-lg-row py-2 align-items-center"
@@ -143,7 +200,7 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
             {availableTimes.map((availableTime, index) => (
               <button
                 key={index}
-                onClick={() => updateMovieTime(availableTime)}
+                onClick={() => setTime(availableTime)}
                 className={`btn btn-time mx-2 ${
                   time?.showTime === availableTime.showTime ? "active" : ""
                 }`}
@@ -157,7 +214,7 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
             <DatePicker
               wrapperClassName="date-picker"
               startDate={startDate}
-              minDate={startDate}
+              minDate={new Date()}
               selected={startDate}
               onChange={(date) => {
                 setStartDate(date);
@@ -213,4 +270,10 @@ const BootstrapModal = ({ show, handleClose, bookingDetails }) => {
   );
 };
 
-export default BootstrapModal;
+export default BookSeat;
+
+BookSeat.propTypes = {
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  bookingDetails: PropTypes.any,
+};
