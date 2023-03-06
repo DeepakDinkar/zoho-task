@@ -1,13 +1,51 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400;0,600;1,400;1,600&family=Tilt+Prism&display=swap');
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+* {
+    font-family: 'Cabin', sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.font-cabin {
+    font-family: 'Cabin', sans-serif;
+}
+
+.font-tilt-prism {
+    font-family: 'Tilt Prism', cursive;
+}
+
+/* Color codes */
+
+:root {
+    --white: #E7E7E7;
+    --black: #151515;
+    --grey: #343a40;
+
+    --success: #41B87E;
+    --failure: #FF5261;
+
+    --primary: #FFCC4A;
+    --secondary: #C17FD0;
+}
+
+.app-bg-primary {
+    background: var(--primary);
+}
+
+.app-bg-success {
+    background: var(--success);
+}
+
+.app-bg-failure {
+    background: var(--failure);
+}
+
+/* Bootstrap Overrides */
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.modal-content {
+    background: var(--black);
+    color: var(--white);
 }
