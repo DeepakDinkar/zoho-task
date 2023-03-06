@@ -9,6 +9,8 @@ Note: Make sure node is installed in your system.
 4. Open browser and hit the url http://localhost:3000/
 
 Screenshots: 
-![image](https://user-images.githubusercontent.com/27347327/223183040-3c0eb77b-f2db-4cc4-bbf6-03ff1bfaa4d9.png)
+![image](https://user-images.githubusercontent.com/27347327/223183322-39d91203-f730-464e-966a-d03b1a1a796c.png)
+![image](https://user-images.githubusercontent.com/27347327/223183385-0bf061b4-7e3f-4b5f-95fe-2c6b4fcc849b.png)
+![image](https://user-images.githubusercontent.com/27347327/223183452-fd9676df-07a8-41da-8bf0-1d615a9bf8c4.png)
+![image](https://user-images.githubusercontent.com/27347327/223183496-1c075b6b-76d0-4fd0-aeec-bee66e5eff3d.png)
 
-![image](https://user-images.githubusercontent.com/27347327/223182576-a9aa8561-0c08-441c-b444-7c4a312d5065.png)
