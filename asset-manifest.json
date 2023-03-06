@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/zoho-task/static/css/main.ea861017.css",
+    "main.js": "/zoho-task/static/js/main.8842d373.js",
+    "static/js/787.a8f7c54c.chunk.js": "/zoho-task/static/js/787.a8f7c54c.chunk.js",
+    "static/media/background.svg": "/zoho-task/static/media/background.ab6476e54d0e544cbdd7.svg",
+    "index.html": "/zoho-task/index.html",
+    "static/media/star.svg": "/zoho-task/static/media/star.a916608122552e5fb52b.svg",
+    "main.ea861017.css.map": "/zoho-task/static/css/main.ea861017.css.map",
+    "main.8842d373.js.map": "/zoho-task/static/js/main.8842d373.js.map",
+    "787.a8f7c54c.chunk.js.map": "/zoho-task/static/js/787.a8f7c54c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ea861017.css",
+    "static/js/main.8842d373.js"
+  ]
+}
