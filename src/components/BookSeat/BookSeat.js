@@ -46,13 +46,12 @@ const BookSeat = ({ show, handleClose, bookingDetails }) => {
               seat[`show${time?.index}_time`] === time.showTime
           )
         : [];
-
       if (seats) {
         let bookedSeats = seats[`show${time.index}_booked_seats`];
         if (bookedSeats && bookedSeats.charAt(1) === ",") {
           bookedSeats = bookedSeats.slice(0, 1) + bookedSeats.slice(2);
         }
-        setReservedSeats(JSON.parse(bookedSeats));
+        bookedSeats && setReservedSeats(JSON.parse(bookedSeats));
       } else {
         setReservedSeats([]);
       }
