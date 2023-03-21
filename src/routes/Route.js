@@ -10,6 +10,7 @@ const AppRoute = () => {
   return (
     <Routes>
       <Route path="/" element={<Movies />} />
+      <Route path="/zoho-task" element={<Movies />} />
       <Route path="movies" element={<Movies />} />
       <Route path="theatres" element={<Theatres />} />
       <Route path="movie/:movieId" element={<MovieDetail />} />
