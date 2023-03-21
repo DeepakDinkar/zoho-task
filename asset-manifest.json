@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/zoho-task/static/css/main.9b378c82.css",
-    "main.js": "/zoho-task/static/js/main.292afa97.js",
+    "main.css": "/zoho-task/static/css/main.58d3577f.css",
+    "main.js": "/zoho-task/static/js/main.1c4cff0c.js",
     "static/js/787.a8f7c54c.chunk.js": "/zoho-task/static/js/787.a8f7c54c.chunk.js",
     "static/media/background.svg": "/zoho-task/static/media/background.ab6476e54d0e544cbdd7.svg",
     "index.html": "/zoho-task/index.html",
     "static/media/error.svg": "/zoho-task/static/media/error.f2b17e5988e45245d2de.svg",
     "static/media/star.svg": "/zoho-task/static/media/star.a916608122552e5fb52b.svg",
-    "main.9b378c82.css.map": "/zoho-task/static/css/main.9b378c82.css.map",
-    "main.292afa97.js.map": "/zoho-task/static/js/main.292afa97.js.map",
+    "main.58d3577f.css.map": "/zoho-task/static/css/main.58d3577f.css.map",
+    "main.1c4cff0c.js.map": "/zoho-task/static/js/main.1c4cff0c.js.map",
     "787.a8f7c54c.chunk.js.map": "/zoho-task/static/js/787.a8f7c54c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9b378c82.css",
-    "static/js/main.292afa97.js"
+    "static/css/main.58d3577f.css",
+    "static/js/main.1c4cff0c.js"
   ]
 }
