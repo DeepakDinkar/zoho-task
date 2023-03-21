@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/zoho-task/static/css/main.58d3577f.css",
-    "main.js": "/zoho-task/static/js/main.fc414158.js",
+    "main.js": "/zoho-task/static/js/main.1aca3903.js",
     "static/js/787.a8f7c54c.chunk.js": "/zoho-task/static/js/787.a8f7c54c.chunk.js",
     "static/media/background.svg": "/zoho-task/static/media/background.ab6476e54d0e544cbdd7.svg",
     "index.html": "/zoho-task/index.html",
     "static/media/error.svg": "/zoho-task/static/media/error.f2b17e5988e45245d2de.svg",
     "static/media/star.svg": "/zoho-task/static/media/star.a916608122552e5fb52b.svg",
     "main.58d3577f.css.map": "/zoho-task/static/css/main.58d3577f.css.map",
-    "main.fc414158.js.map": "/zoho-task/static/js/main.fc414158.js.map",
+    "main.1aca3903.js.map": "/zoho-task/static/js/main.1aca3903.js.map",
     "787.a8f7c54c.chunk.js.map": "/zoho-task/static/js/787.a8f7c54c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.58d3577f.css",
-    "static/js/main.fc414158.js"
+    "static/js/main.1aca3903.js"
   ]
 }
