@@ -1,17 +1,17 @@
+import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Error from "./components/Error/Error";
-import ErrorBoundary from "./components/Error/ErrorBoundary";
 import Header from "./components/Header/Header";
 import Loader from "./components/Loader/Loader";
-import Movies from "./components/Movies/Movies";
 import { useGetAllDetails } from "./hooks/useGetAllDetails";
+import AppRoute from "./routes/Route";
 
 /**
  * !Skipped Unit Testing
- * @returns 
+ * @returns
  */
 const App = () => {
-  const { isLoading, data, error } = useGetAllDetails();
+  const { isLoading, error } = useGetAllDetails();
 
   if (isLoading) {
     return <Loader />;
@@ -22,10 +22,12 @@ const App = () => {
   }
 
   return (
-    <ErrorBoundary>
+    <BrowserRouter>
       <Header />
-      <Movies movies={data.movies} theatres={data.theatre} />
-    </ErrorBoundary>
+      <div className="header-fix">
+        <AppRoute />
+      </div>
+    </BrowserRouter>
   );
 };
 

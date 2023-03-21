@@ -1,0 +1,4 @@
+// Action constants
+
+export const INITIAL_LOAD_SUCCESS = 'INITIAL_LOAD_SUCCESS';
+export const UPDATE_RESERVED_SEATS = 'UPDATE_RESERVED_SEATS';

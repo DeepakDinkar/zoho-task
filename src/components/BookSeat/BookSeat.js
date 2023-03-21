@@ -6,7 +6,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { bookSeats } from "../../services/Api";
 import Alert from "react-bootstrap/Alert";
-import { getFormattedDate } from "../../Utils";
+import {
+  getArrayFromString,
+  getAvailableTimes,
+  getFormattedDate,
+  getTheatreIndex,
+} from "../../Utils";
 import PropTypes from "prop-types";
 import TheatreInfo from "../Theatre-info/TheatreInfo";
 import {
@@ -15,21 +20,33 @@ import {
   SEAT_ERROR,
   TIME_ERROR,
 } from "../../Constants";
+import { useDispatch, useSelector } from "react-redux";
+import { UPDATE_RESERVED_SEATS } from "../../store/actions";
 
 const BookSeat = ({ show, handleClose, bookingDetails }) => {
-  const area = [...Array(100)];
-  const { theatre, availableTimes, movie } = bookingDetails;
-
+  // State variables
   const [time, setTime] = useState(null);
   const [date, setDate] = useState(getFormattedDate(new Date()));
   const [startDate, setStartDate] = useState(new Date());
-  const [reservedSeats, setReservedSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [reservedSeats, setReservedSeats] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [alert, setAlert] = useState({
     message: null,
     type: null,
   });
+
+  // Selector variables
+  const theatres = useSelector((state) => state.theatre);
+  const { theatre, movie } = bookingDetails;
+  const availableTimes = getAvailableTimes(theatre, movie?.movie_name);
+  const currentTheatreIndex = getTheatreIndex(theatres, theatre.theatre_name);
+  const bookedSeats = useSelector(
+    (state) => state?.theatre[currentTheatreIndex]?.booked_seats
+  );
+
+  const dispatch = useDispatch();
+  const area = [...Array(100)];
 
   /**
    * Effect runs whenever the time or date is changed.
@@ -38,25 +55,22 @@ const BookSeat = ({ show, handleClose, bookingDetails }) => {
    */
   useEffect(() => {
     if (time && date) {
-      setSelectedSeats([]); // Resets selected seats whenever time and date is changed.
-      const seats = theatre.booked_seats
-        ? theatre.booked_seats.find(
-            (seat) =>
-              seat.date === date &&
-              seat[`show${time?.index}_time`] === time.showTime
+      const seats = bookedSeats
+        ? bookedSeats.find(
+            (s) =>
+              s.date === date && s[`show${time?.index}_time`] === time.showTime
           )
         : [];
       if (seats) {
         let bookedSeats = seats[`show${time.index}_booked_seats`];
-        if (bookedSeats && bookedSeats.charAt(1) === ",") {
-          bookedSeats = bookedSeats.slice(0, 1) + bookedSeats.slice(2);
-        }
+        bookedSeats = getArrayFromString(bookedSeats);
         bookedSeats && setReservedSeats(JSON.parse(bookedSeats));
       } else {
         setReservedSeats([]);
       }
     }
-  }, [time, date, theatre]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [time, date, JSON.stringify(bookedSeats), bookedSeats]);
 
   /**
    * Updates date when user is selected.
@@ -79,18 +93,6 @@ const BookSeat = ({ show, handleClose, bookingDetails }) => {
     } else {
       setSelectedSeats((existingSeats) => [...existingSeats, seat]);
     }
-  };
-
-  /**
-   * Resets booking details when user closes the modal.
-   */
-  const resetBookingDetails = () => {
-    setTime(null);
-    setDate(getFormattedDate(new Date()));
-    setStartDate(new Date());
-    setSelectedSeats([]);
-    setReservedSeats([]);
-    setShowAlert(false);
   };
 
   /**
@@ -122,8 +124,9 @@ const BookSeat = ({ show, handleClose, bookingDetails }) => {
       return setShowAlert(true);
     }
 
-    bookSeats(getPayload())
-      .then(({ message }) => handleSuccess(message))
+    const payload = getPayload();
+    bookSeats(payload)
+      .then(({ message }) => handleSuccess(message, payload))
       .catch(() => handleFailure());
   };
 
@@ -145,10 +148,20 @@ const BookSeat = ({ show, handleClose, bookingDetails }) => {
    * Handles booking success --> Need to move to custom hook.
    * @param {*} message
    */
-  const handleSuccess = (message) => {
+  const handleSuccess = (message, payload) => {
     if (message.includes(ALERT_TYPES.SUCCESS)) {
-      setReservedSeats([...reservedSeats, ...selectedSeats]);
       setSelectedSeats([]);
+
+      dispatch({
+        type: UPDATE_RESERVED_SEATS,
+        payload: {
+          date: date,
+          [`show${time.index}_time`]: time?.showTime,
+          [`show${time.index}_booked_seats`]: selectedSeats,
+          theatre_name: theatre?.theatre_name,
+          timeIndex: time?.index,
+        },
+      });
     }
     setAlert({
       message: message,
@@ -174,7 +187,6 @@ const BookSeat = ({ show, handleClose, bookingDetails }) => {
    * Resets all booking details and closes the modal.
    */
   const closeModal = () => {
-    resetBookingDetails();
     handleClose();
   };
 

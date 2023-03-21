@@ -196,3 +196,46 @@ body {
   font-size: 3rem;
   color: var(--failure);
 }
+
+.link-active {
+  text-decoration: underline;
+}
+
+.header-fix {
+  margin-top: 61px;
+}
+
+/** */
+.image-wrapper {
+  height: 330px;
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.movie-details-info,
+.theatre-list-wrapper {
+  color: var(--white);
+}
+
+.movie-details-container {
+  gap: 1.5rem;
+}
+
+.card-list-container {
+  width: 260px;
+  height: auto !important;
+  min-height: 510px;
+}
+
+.card-list-container img {
+  height: 330px !important;
+}
+
+.btn-book-now, .error-btn {
+  background: var(--primary);
+  box-shadow: 2px 2px var(--secondary);
+}
+
+.error-btn {
+  font-size: 1rem;
+}
