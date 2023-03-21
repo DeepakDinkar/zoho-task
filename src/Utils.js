@@ -160,7 +160,7 @@ export const getUpdatedSeats = (payload, theatres) => {
         bookedSeats[dateIndex][SEATS_KEY] = convertArrayToString(seats);
       } else {
         bookedSeats[dateIndex][TIME_KEY] = payload[TIME_KEY];
-        bookedSeats[dateIndex][SEATS_KEY] = JSON.stringify(payload[SEATS_KEY]);
+        bookedSeats[dateIndex][SEATS_KEY] = payload[SEATS_KEY];
       }
     } else {
       bookedSeats.push(payload);
